@@ -1,0 +1,9 @@
+{
+  "general": {
+    "skip_to_content": "Skip to content",
+    "add_to_cart": "Add to cart",
+    "added_to_cart": "Added to your cart",
+    "sold_out": "Sold out",
+    "cart_error": "Sorry, we couldn't add that to your cart."
+  }
+}

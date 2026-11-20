@@ -1,0 +1,96 @@
+<div class="container">
+  <div class="page-title"><h1>Your cart</h1></div>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="empty panel">
+      <div style="font-size:3rem" aria-hidden="true">🛒</div>
+      <h2>Your cart is empty</h2>
+      <p class="muted">Add something you love and it will show up here.</p>
+      <a class="btn" href="{{ routes.all_products_collection_url }}">Start shopping</a>
+    </div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" id="cart-form" novalidate>
+      <div class="two-col">
+        <div class="panel">
+          {%- for item in cart.items -%}
+            <div class="line-item">
+              <a href="{{ item.url }}">
+                {%- if item.image -%}
+                  {{ item.image | image_url: width: 160, height: 160, crop: 'center' | image_tag: loading: 'lazy', alt: item.product.title }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+                {%- endif -%}
+              </a>
+              <div>
+                <h3><a href="{{ item.url }}">{{ item.product.title }}</a></h3>
+                {%- unless item.product.has_only_default_variant -%}
+                  <div class="muted">{{ item.variant.title }}</div>
+                {%- endunless -%}
+                {%- for property in item.properties -%}
+                  {%- assign first_char = property.first | slice: 0 -%}
+                  {%- if property.last != blank and first_char != '_' -%}
+                    <div class="muted">{{ property.first }}: {{ property.last }}</div>
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- for allocation in item.line_level_discount_allocations -%}
+                  <div class="discount">{{ allocation.discount_application.title }} (-{{ allocation.amount | money }})</div>
+                {%- endfor -%}
+                <div class="muted">
+                  {%- if item.original_price != item.final_price -%}<s>{{ item.original_price | money }}</s> {% endif -%}
+                  {{ item.final_price | money }} each
+                </div>
+                <div class="qty" role="group" aria-label="Quantity for {{ item.product.title | escape }}" style="margin-top:8px">
+                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" inputmode="numeric" aria-label="Quantity for {{ item.product.title | escape }}" data-line-qty>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <strong>{{ item.final_line_price | money }}</strong><br>
+                <a class="link-btn" href="{{ item.url_to_remove }}">Remove</a>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <aside class="panel summary" aria-label="Order summary">
+          <h2>Order summary</h2>
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <div class="summary-row"><span>{{ discount.title }}</span><span>-{{ discount.total_allocated_amount | money }}</span></div>
+          {%- endfor -%}
+          <div class="summary-row total"><span>Subtotal</span><span>{{ cart.total_price | money_with_currency }}</span></div>
+          <p class="muted" style="font-size:.9rem">
+            {%- if cart.taxes_included %}Taxes included. {% endif -%}
+            Shipping{% unless cart.taxes_included %} and taxes{% endunless %} calculated at checkout.
+          </p>
+
+          {%- assign threshold = settings.free_shipping_threshold | times: 100 -%}
+          {%- if threshold > 0 -%}
+            {%- assign remaining = threshold | minus: cart.total_price -%}
+            {%- assign pct = cart.total_price | times: 100.0 | divided_by: threshold | at_most: 100 -%}
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct | round }}"><div style="width:{{ pct }}%"></div></div>
+            <p class="muted" style="font-size:.9rem;margin:0 0 16px">
+              {%- if remaining > 0 -%}
+                Add {{ remaining | money }} more for free shipping
+              {%- else -%}
+                You've unlocked free shipping 🎉
+              {%- endif -%}
+            </p>
+          {%- endif -%}
+
+          <div class="field">
+            <label for="cart-note">Order note</label>
+            <textarea id="cart-note" name="note" rows="3">{{ cart.note }}</textarea>
+          </div>
+
+          <button type="submit" name="checkout" class="btn block">Checkout</button>
+          <noscript><button type="submit" name="update" class="btn secondary block" style="margin-top:8px">Update cart</button></noscript>
+        </aside>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart page"
+}
+{% endschema %}

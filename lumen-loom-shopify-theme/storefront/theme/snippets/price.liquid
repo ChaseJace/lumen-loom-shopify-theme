@@ -1,0 +1,12 @@
+{%- comment -%}
+  Price display. Params: product (required), variant (optional).
+  Without a variant, shows "From" when variants have different prices.
+{%- endcomment -%}
+{%- assign v = variant | default: product.selected_or_first_available_variant -%}
+{%- if variant == nil and product.price_varies -%}
+  <span class="price-from">From</span>
+{%- endif -%}
+<span class="price-now">{{ v.price | money }}</span>
+{%- if v.compare_at_price > v.price -%}
+  <s>{{ v.compare_at_price | money }}</s>
+{%- endif -%}

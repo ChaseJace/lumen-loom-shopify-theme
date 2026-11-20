@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="page-title"><h1>Collections</h1></div>
+  <div class="cat-grid" style="padding-bottom:64px">
+    {%- for collection in collections -%}
+      <a class="cat-tile" href="{{ collection.url }}">{{ collection.title }}</a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collections list page"
+}
+{% endschema %}

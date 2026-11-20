@@ -1,0 +1,56 @@
+{%- assign menu = linklists[section.settings.menu] -%}
+{%- if section.settings.announcement != blank -%}
+  <div class="announce">
+    {%- if section.settings.announcement_link != blank -%}
+      <a href="{{ section.settings.announcement_link }}">{{ section.settings.announcement }}</a>
+    {%- else -%}
+      {{ section.settings.announcement }}
+    {%- endif -%}
+  </div>
+{%- endif -%}
+<div class="container">
+  <div class="header-row">
+    <a class="logo" href="{{ routes.root_url }}">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 300 | image_tag: height: 36, loading: 'eager' }}
+      {%- else -%}
+        {{ shop.name }}
+      {%- endif -%}
+    </a>
+
+    <nav class="nav" aria-label="Main">
+      {%- for link in menu.links -%}
+        <a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+      {%- endfor -%}
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-btn" href="{{ routes.search_url }}" aria-label="Search">🔍</a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="icon-btn" href="{{ routes.account_url }}" aria-label="Account">👤</a>
+      {%- endif -%}
+      <a class="icon-btn" href="{{ routes.cart_url }}" aria-label="Cart">🛒<span class="badge" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span></a>
+      <button class="icon-btn menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu" data-menu-toggle>☰</button>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
+    {%- for link in menu.links -%}
+      <a href="{{ link.url }}">{{ link.title }}</a>
+    {%- endfor -%}
+  </nav>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "header",
+  "class": "site-header",
+  "settings": [
+    { "type": "text", "id": "announcement", "label": "Announcement text", "default": "Free standard shipping on orders over $75" },
+    { "type": "url", "id": "announcement_link", "label": "Announcement link" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image", "info": "Leave empty to show the store name as text." },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" }
+  ]
+}
+{% endschema %}

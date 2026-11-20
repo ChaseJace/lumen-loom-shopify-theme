@@ -1,0 +1,65 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_brand }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <title>{{ page_title }}{%- unless page_title contains shop.name %} | {{ shop.name }}{% endunless -%}</title>
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  {% render 'meta-tags' %}
+
+  <style>
+    :root {
+      --brand: {{ settings.color_brand }};
+      --brand-dark: {{ settings.color_brand | color_darken: 8 }};
+      --accent: {{ settings.color_accent }};
+    }
+  </style>
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <script>
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    window.theme = {
+      locale: {{ request.locale.iso_code | json }},
+      currency: {{ cart.currency.iso_code | json }},
+      routes: {
+        cartAdd: {{ routes.cart_add_url | json }},
+        cartJs: {{ routes.cart_url | append: '.js' | json }}
+      },
+      strings: {
+        added: {{ 'general.added_to_cart' | t | json }},
+        addToCart: {{ 'general.add_to_cart' | t | json }},
+        soldOut: {{ 'general.sold_out' | t | json }},
+        error: {{ 'general.cart_error' | t | json }}
+      }
+    };
+  </script>
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+
+  {{ content_for_header }}
+</head>
+
+<body class="template-{{ template.name | handle }}">
+  <a class="skip-link" href="#main">{{ 'general.skip_to_content' | t }}</a>
+
+  {% section 'header' %}
+
+  <main id="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+
+  <div class="toast" role="status" aria-live="polite" data-toast></div>
+</body>
+</html>

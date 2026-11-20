@@ -1,0 +1,35 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Lumen & Loom",
+    "theme_version": "1.0.0",
+    "theme_author": "Sample",
+    "theme_documentation_url": "https://shopify.dev/docs/storefronts/themes",
+    "theme_support_url": "https://help.shopify.com/"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      { "type": "color", "id": "color_brand", "label": "Brand color", "default": "#2f5d50" },
+      { "type": "color", "id": "color_accent", "label": "Accent color", "default": "#c8553d" }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Square image, at least 32 x 32 px." }
+    ]
+  },
+  {
+    "name": "Shipping",
+    "settings": [
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "default": 75,
+        "info": "Used for the progress bar in the cart. Set to 0 to hide it. This only displays a message; configure the real free-shipping rate in Settings > Shipping and delivery."
+      }
+    ]
+  }
+]

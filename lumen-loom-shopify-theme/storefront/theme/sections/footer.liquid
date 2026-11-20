@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="footer-grid">
+    <div>
+      <h3>{{ shop.name }}</h3>
+      {%- if section.settings.about != blank -%}<p>{{ section.settings.about }}</p>{%- endif -%}
+    </div>
+    <div>
+      <h3>{{ section.settings.menu_heading }}</h3>
+      {%- for link in linklists[section.settings.menu].links -%}
+        <a href="{{ link.url }}">{{ link.title }}</a>
+      {%- endfor -%}
+    </div>
+    <div>
+      <h3>{{ section.settings.menu_2_heading }}</h3>
+      {%- for link in linklists[section.settings.menu_2].links -%}
+        <a href="{{ link.url }}">{{ link.title }}</a>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+    <ul class="payment-icons" role="list" aria-label="Accepted payment methods">
+      {%- for type in shop.enabled_payment_types -%}
+        <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+  <div class="copyright">&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ powered_by_link }}</div>
+</div>
+
+{% schema %}
+{
+  "name": "Footer",
+  "tag": "footer",
+  "class": "site-footer",
+  "settings": [
+    { "type": "textarea", "id": "about", "label": "About text", "default": "Thoughtfully made goods for the home, the kitchen and the people you love." },
+    { "type": "text", "id": "menu_heading", "label": "Menu 1 heading", "default": "Shop" },
+    { "type": "link_list", "id": "menu", "label": "Menu 1", "default": "main-menu" },
+    { "type": "text", "id": "menu_2_heading", "label": "Menu 2 heading", "default": "Help" },
+    { "type": "link_list", "id": "menu_2", "label": "Menu 2", "default": "footer" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,96 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign featured = product.featured_image -%}
+{%- assign main_alt = featured.alt | default: product.title -%}
+<div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a>
+    {%- if collection %} / <a href="{{ collection.url }}">{{ collection.title }}</a>{% endif %}
+    / {{ product.title }}
+  </nav>
+
+  <div class="pdp">
+    <div class="gallery">
+      <div class="pdp-img">
+        {%- if featured -%}
+          {{ featured | image_url: width: 1000 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '500, 750, 1000', sizes: '(min-width: 800px) 50vw, 100vw', alt: main_alt, data-main-image: '' }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+        {%- endif -%}
+      </div>
+      {%- if product.images.size > 1 -%}
+        <div class="thumbs">
+          {%- for image in product.images limit: 6 -%}
+            {%- assign thumb_alt = image.alt | default: product.title -%}
+            <button type="button" class="thumb" data-thumb="{{ image | image_url: width: 1000 }}" data-alt="{{ thumb_alt | escape }}" aria-label="Show image {{ forloop.index }}">
+              {{ image | image_url: width: 120, height: 120, crop: 'center' | image_tag: loading: 'lazy', alt: '' }}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="pdp-info">
+      {%- if section.settings.show_vendor and product.vendor != blank -%}
+        <p class="muted" style="margin:0">{{ product.vendor }}</p>
+      {%- endif -%}
+      <h1>{{ product.title }}</h1>
+      <div class="pdp-price" data-price>{% render 'price', product: product, variant: current_variant %}</div>
+
+      <div class="rte">{{ product.description }}</div>
+
+      {%- form 'product', product, class: 'product-form', novalidate: 'novalidate', data-product-form: '' -%}
+        {%- unless product.has_only_default_variant -%}
+          <div class="field">
+            <label for="variant-{{ section.id }}">{{ product.options | join: ' / ' }}</label>
+            <select id="variant-{{ section.id }}" name="id" data-variant-select>
+              {%- for variant in product.variants -%}
+                <option value="{{ variant.id }}"
+                  data-price="{{ variant.price }}"
+                  data-compare="{{ variant.compare_at_price }}"
+                  data-available="{{ variant.available }}"
+                  {% if variant.id == current_variant.id %}selected{% endif %}>
+                  {{ variant.title }}{% unless variant.available %} - sold out{% endunless %}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- else -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {%- endunless -%}
+
+        <div class="buy-row">
+          <div class="qty" role="group" aria-label="Quantity">
+            <button type="button" data-qty-minus aria-label="Decrease quantity">&minus;</button>
+            <input type="number" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Quantity">
+            <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+          </div>
+          <button type="submit" name="add" class="btn" data-add-button{% unless current_variant.available %} disabled data-sold-out="true"{% endunless %}>
+            {%- if current_variant.available -%}{{ 'general.add_to_cart' | t }}{%- else -%}{{ 'general.sold_out' | t }}{%- endif -%}
+          </button>
+        </div>
+        <p class="field-error" role="alert" data-form-error></p>
+
+        {%- if section.settings.show_dynamic_checkout -%}
+          {{ form | payment_button }}
+        {%- endif -%}
+      {%- endform -%}
+
+      {%- if section.settings.shipping_note != blank -%}
+        <p class="muted" style="font-size:.9rem">{{ section.settings.shipping_note }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script type="application/ld+json">{{ product | structured_data }}</script>
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": [
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false },
+    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout buttons", "info": "Shop Pay, Apple Pay and other express buttons, depending on your payment settings.", "default": true },
+    { "type": "textarea", "id": "shipping_note", "label": "Shipping note", "default": "Free standard shipping on qualifying orders. 30-day returns." }
+  ]
+}
+{% endschema %}

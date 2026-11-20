@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      <div class="section-head"><h2>{{ section.settings.heading }}</h2></div>
+    {%- endif -%}
+    <div class="cat-grid">
+      {%- for block in section.blocks -%}
+        {%- assign c = block.settings.collection -%}
+        <a class="cat-tile" href="{{ c.url | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon != blank -%}
+            <span class="em" aria-hidden="true">{{ block.settings.icon }}</span>
+          {%- endif -%}
+          {{ block.settings.title | default: c.title }}
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by category" }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Title override", "info": "Leave empty to use the collection title." },
+        { "type": "text", "id": "icon", "label": "Emoji icon" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    { "name": "Collection list", "blocks": [{ "type": "collection" }, { "type": "collection" }, { "type": "collection" }, { "type": "collection" }] }
+  ]
+}
+{% endschema %}

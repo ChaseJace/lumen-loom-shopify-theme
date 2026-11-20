@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="page-title"><h1>Search</h1></div>
+  <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+    <label class="visually-hidden" for="q">Search our store</label>
+    <input id="q" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products..." autocomplete="off">
+    <input type="hidden" name="options[prefix]" value="last">
+    <button class="btn" type="submit">Search</button>
+  </form>
+
+  {%- if search.performed -%}
+    {%- paginate search.results by 24 -%}
+      <p class="muted" aria-live="polite">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for &ldquo;{{ search.terms | escape }}&rdquo;</p>
+      {%- if search.results_count > 0 -%}
+        <div class="grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'product-card', product: item %}
+            {%- else -%}
+              <article class="card"><div class="card-body"><h3><a href="{{ item.url }}">{{ item.title }}</a></h3></div></article>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Pagination">
+            {%- if paginate.previous -%}<a class="btn secondary" href="{{ paginate.previous.url }}">Previous</a>{%- endif -%}
+            <span>Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            {%- if paginate.next -%}<a class="btn secondary" href="{{ paginate.next.url }}">Next</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="empty"><h2>No results found</h2><p class="muted">Check the spelling or try a different search.</p></div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
+  <div style="height:64px"></div>
+</div>
+
+{% schema %}
+{
+  "name": "Search page"
+}
+{% endschema %}

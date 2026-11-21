@@ -1,6 +1,6 @@
 # Lumen & Loom — Custom Shopify Online Store 2.0 Theme
 
-A custom-built, responsive e-commerce storefront theme engineered from scratch using Shopify's **Online Store 2.0** architecture (Liquid, JSON templates, modular sections, and vanilla JavaScript/CSS). Designed to provide merchants with full drag-and-drop customization in the Shopify Theme Editor without relying on heavy third-party frameworks.
+A custom-built, responsive e-commerce storefront theme engineered from scratch using Shopify's **Online Store 2.0** architecture (Liquid, JSON templates, modular sections, and vanilla JavaScript/CSS). Designed to provide merchants with full drag-and-drop customization in the Shopify Theme Editor without relying on heavy third-party frameworks. Practice theme build; code is shared for portfolio review while the storefront itself is not published live.
 
 ## Live Preview & Screenshots
 ![Homepage Preview](./lumen-loom-shopify-theme/storefront/homepage.png)
